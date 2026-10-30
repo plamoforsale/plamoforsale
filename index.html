@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plamo for Sale</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --card-hover: #273549;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --accent: #f59e0b;
+      --border: #334155;
+      --tag-bg: #334155;
+      --tag-pb: #dc2626;
+      --tag-sidef: #0284c7;
+      --badge-jpy: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Noto Sans TC", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 20px 16px 80px;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding: 20px 0;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .stat-pill {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .stat-pill strong {
+      color: var(--primary);
+    }
+
+    /* Controls Bar */
+    .controls {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      background-color: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px 10px 38px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      width: 16px;
+      height: 16px;
+    }
+
+    .filter-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      background-color: #0f172a;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover {
+      border-color: var(--primary);
+      color: var(--text-main);
+    }
+    .filter-btn.active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: #475569;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    .image-container {
+      position: relative;
+      width: 100%;
+      padding-top: 75%; /* 4:3 Aspect Ratio */
+      background-color: #020617;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .image-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .card:hover .image-container img {
+      transform: scale(1.04);
+    }
+
+    .card-id {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      gap: 10px;
+    }
+
+    .card-header-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    .tag-series {
+      background-color: #334155;
+      color: #cbd5e1;
+    }
+    .tag-pb {
+      background-color: rgba(220, 38, 38, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(220, 38, 38, 0.4);
+    }
+    .tag-sidef {
+      background-color: rgba(2, 132, 199, 0.2);
+      color: #38bdf8;
+      border: 1px solid rgba(2, 132, 199, 0.4);
+    }
+
+    .card-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: #f1f5f9;
+    }
+
+    .card-code {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .price-box {
+      margin-top: auto;
+      padding: 10px 12px;
+      background-color: rgba(15, 23, 42, 0.6);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .price-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .price-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--badge-jpy);
+    }
+
+    .price-tax-ex {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: 4px;
+    }
+
+    .card-actions {
+      margin-top: 4px;
+    }
+
+    .btn-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      background-color: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: var(--primary);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .btn-link:hover {
+      background-color: var(--primary);
+      color: #0f172a;
+    }
+
+    /* Empty state */
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    /* Modal / Lightbox */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 8px;
+      object-fit: contain;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      color: #f1f5f9;
+      font-size: 32px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+    .modal-caption {
+      position: absolute;
+      bottom: 20px;
+      color: #cbd5e1;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 8px 18px;
+      border-radius: 9999px;
+      font-size: 0.9rem;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 1.5rem; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+      .card-body { padding: 12px; }
+      .card-title { font-size: 0.9rem; }
+      .price-value { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Plamo for Sale</h1>
+      <p class="subtitle">全部模型照片、產品編號、參考定價與產品資訊</p>
+      <div class="stats-bar">
+        <div class="stat-pill">總照片數：<strong id="totalCount">83</strong> 件</div>
+        <div class="stat-pill">目前顯示：<strong id="visibleCount">83</strong> 件</div>
+      </div>
+    </header>
+
+    <div class="controls">
+      <div class="search-wrapper">
+        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="搜尋模型名稱、機體編號（如：沙薩比、薩克、RG、MGSD、德姆）...">
+      </div>
+
+      <div class="filter-tags">
+        <button class="filter-btn active" data-filter="all">全部 (83)</button>
+        <button class="filter-btn" data-filter="RG">RG 系列</button>
+        <button class="filter-btn" data-filter="HG">HG 系列</button>
+        <button class="filter-btn" data-filter="MG">MG / MGSD</button>
+        <button class="filter-btn" data-filter="PB">PB魂商限定</button>
+        <button class="filter-btn" data-filter="SIDE-F">SIDE-F / 基地</button>
+        <button class="filter-btn" data-filter="MODEROID">MODEROID</button>
+        <button class="filter-btn" data-filter="OTHER">四驅車 / 其他</button>
+      </div>
+    </div>
+
+    <div class="grid" id="itemsGrid">
+      <!-- Cards rendered via JS -->
+    </div>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div class="modal" id="imageModal">
+    <span class="modal-close" id="modalClose">&times;</span>
+    <img class="modal-content" id="modalImg" src="" alt="模型大圖">
+    <div class="modal-caption" id="modalCaption"></div>
+  </div>
+
+  <script src="items_data.js"></script>
+  <script>
+    const grid = document.getElementById('itemsGrid');
+    const searchInput = document.getElementById('searchInput');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const visibleCountEl = document.getElementById('visibleCount');
+    const totalCountEl = document.getElementById('totalCount');
+
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    const modalCaption = document.getElementById('modalCaption');
+    const modalClose = document.getElementById('modalClose');
+
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    if (typeof ITEMS_DATA !== 'undefined') {
+      totalCountEl.textContent = ITEMS_DATA.length;
+      renderItems(ITEMS_DATA);
+    }
+
+    function renderItems(data) {
+      grid.innerHTML = '';
+      let visible = 0;
+
+      data.forEach(item => {
+        // Filter logic
+        let matchFilter = true;
+        if (currentFilter === 'RG') matchFilter = item.series.includes('RG');
+        else if (currentFilter === 'HG') matchFilter = item.series.includes('HG');
+        else if (currentFilter === 'MG') matchFilter = item.series.includes('MG');
+        else if (currentFilter === 'PB') matchFilter = item.note.includes('PB') || item.note.includes('魂商');
+        else if (currentFilter === 'SIDE-F') matchFilter = item.note.includes('SIDE-F') || item.note.includes('基地');
+        else if (currentFilter === 'MODEROID') matchFilter = item.series.includes('MODEROID') || item.name.includes('MODEROID');
+        else if (currentFilter === 'OTHER') {
+          matchFilter = item.series.includes('四驅車') || item.series.includes('寶可夢') || item.series.includes('30M') || item.series.includes('鋼普拉君') || item.series.includes('組裝模型') || item.series.includes('原創') || item.series.includes('BE');
+        }
+
+        // Search logic
+        let matchSearch = true;
+        if (searchQuery.trim() !== '') {
+          const q = searchQuery.toLowerCase();
+          const target = `${item.name} ${item.code} ${item.series} ${item.note}`.toLowerCase();
+          matchSearch = target.includes(q);
+        }
+
+        if (matchFilter && matchSearch) {
+          visible++;
+          const card = document.createElement('div');
+          card.className = 'card';
+
+          const isPB = item.note.includes('PB') || item.note.includes('魂商');
+          const isSideF = item.note.includes('SIDE-F') || item.note.includes('基地');
+          const productLink = item.officialUrl
+            ? `<a href="${item.officialUrl}" target="_blank" rel="noopener noreferrer" class="btn-link">
+                <span>${escapeHtml(item.officialSiteName)}</span>
+                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </a>`
+            : `<span class="btn-link">${escapeHtml(item.officialSiteName)}</span>`;
+
+          card.innerHTML = `
+            <div class="image-container" onclick="openModal('${item.filename}', '${escapeHtml(item.name)}')">
+              <span class="card-id">#${item.id}</span>
+              <img src="${item.thumb}" alt="${escapeHtml(item.name)}" loading="lazy">
+            </div>
+            <div class="card-body">
+              <div class="card-header-tags">
+                <span class="tag tag-series">${escapeHtml(item.series)}</span>
+                ${isPB ? '<span class="tag tag-pb">PB限定</span>' : ''}
+                ${isSideF ? '<span class="tag tag-sidef">SIDE-F限定</span>' : ''}
+              </div>
+              <h2 class="card-title">${escapeHtml(item.name)}</h2>
+              <div class="card-code">${escapeHtml(item.code)}</div>
+              
+              <div class="price-box">
+                <span class="price-label">參考定價</span>
+                <div>
+                  <span class="price-value">${escapeHtml(item.jpy)}</span>
+                </div>
+              </div>
+
+              <div class="card-actions">
+                ${productLink}
+              </div>
+            </div>
+          `;
+          grid.appendChild(card);
+        }
+      });
+
+      visibleCountEl.textContent = visible;
+      if (visible === 0) {
+        grid.innerHTML = `<div class="no-results">查無符合條件之模型，請嘗試其他關鍵字。</div>`;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Search events
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderItems(ITEMS_DATA);
+    });
+
+    // Filter events
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderItems(ITEMS_DATA);
+      });
+    });
+
+    // Modal
+    function openModal(fullImageFile, title) {
+      modalImg.src = fullImageFile;
+      modalCaption.textContent = title;
+      modal.classList.add('active');
+    }
+
+    modalClose.addEventListener('click', () => modal.classList.remove('active'));
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('active');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') modal.classList.remove('active');
+    });
+  </script>
+</body>
+</html>
