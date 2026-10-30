@@ -114,7 +114,8 @@ const ITEMS_DATA = [
     "officialUrl": "https://bandai-hobby.net/item/01_3524/",
     "officialSiteName": "Bandai Hobby 官方",
     "note": "阿姆羅專用機 / RG #36",
-    "isDup": false
+    "isDup": false,
+    "sold": true
   },
   {
     "id": 10,
@@ -231,7 +232,8 @@ const ITEMS_DATA = [
     "officialUrl": "https://bandai-hobby.net/item/01_2707/",
     "officialSiteName": "Bandai Hobby 官方",
     "note": "GUNDAM THE ORIGIN 版",
-    "isDup": false
+    "isDup": false,
+    "sold": true
   },
   {
     "id": 19,
@@ -491,7 +493,8 @@ const ITEMS_DATA = [
     "officialUrl": "https://bandai-hobby.net/item/01_5968/",
     "officialSiteName": "Bandai Hobby 官方",
     "note": "新機動戰記鋼彈W (TV版設計 RG #42)",
-    "isDup": false
+    "isDup": false,
+    "sold": true
   },
   {
     "id": 39,
@@ -855,7 +858,8 @@ const ITEMS_DATA = [
     "officialUrl": "https://weibo.com/u/7740268800",
     "officialSiteName": "SNAA 官方微博",
     "note": "SNAA 圓桌騎士團系列",
-    "isDup": false
+    "isDup": false,
+    "sold": true
   },
   {
     "id": 67,
@@ -1076,6 +1080,7 @@ const ITEMS_DATA = [
     "officialUrl": "https://bandai-hobby.net/item/01_4277/",
     "officialSiteName": "Bandai Hobby 官方",
     "note": "機動武鬥傳G鋼彈 (RG #37)",
-    "isDup": false
+    "isDup": false,
+    "sold": true
   }
 ];

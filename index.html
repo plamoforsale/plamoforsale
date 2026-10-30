@@ -209,6 +209,24 @@
       border-radius: 4px;
     }
 
+    .sold-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1;
+      padding: 4px 9px;
+      border-radius: 5px;
+      background: #b91c1c;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .card-sold .image-container img {
+      filter: saturate(0.55);
+    }
+
     .card-body {
       padding: 16px;
       display: flex;
@@ -385,6 +403,7 @@
       <div class="stats-bar">
         <div class="stat-pill">總照片數：<strong id="totalCount">83</strong> 件</div>
         <div class="stat-pill">目前顯示：<strong id="visibleCount">83</strong> 件</div>
+        <div class="stat-pill">已售出：<strong id="soldCount">0</strong> 款</div>
       </div>
     </header>
 
@@ -405,6 +424,7 @@
         <button class="filter-btn" data-filter="SIDE-F">SIDE-F / 基地</button>
         <button class="filter-btn" data-filter="MODEROID">MODEROID</button>
         <button class="filter-btn" data-filter="OTHER">四驅車 / 其他</button>
+        <button class="filter-btn" data-filter="SOLD">已售出</button>
       </div>
     </div>
 
@@ -427,6 +447,7 @@
     const filterBtns = document.querySelectorAll('.filter-btn');
     const visibleCountEl = document.getElementById('visibleCount');
     const totalCountEl = document.getElementById('totalCount');
+    const soldCountEl = document.getElementById('soldCount');
 
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImg');
@@ -438,6 +459,7 @@
 
     if (typeof ITEMS_DATA !== 'undefined') {
       totalCountEl.textContent = ITEMS_DATA.length;
+      soldCountEl.textContent = ITEMS_DATA.filter(item => item.sold).length;
       renderItems(ITEMS_DATA);
     }
 
@@ -454,6 +476,7 @@
         else if (currentFilter === 'PB') matchFilter = item.note.includes('PB') || item.note.includes('魂商');
         else if (currentFilter === 'SIDE-F') matchFilter = item.note.includes('SIDE-F') || item.note.includes('基地');
         else if (currentFilter === 'MODEROID') matchFilter = item.series.includes('MODEROID') || item.name.includes('MODEROID');
+        else if (currentFilter === 'SOLD') matchFilter = item.sold === true;
         else if (currentFilter === 'OTHER') {
           matchFilter = item.series.includes('四驅車') || item.series.includes('寶可夢') || item.series.includes('30M') || item.series.includes('鋼普拉君') || item.series.includes('組裝模型') || item.series.includes('原創') || item.series.includes('BE');
         }
@@ -470,6 +493,7 @@
           visible++;
           const card = document.createElement('div');
           card.className = 'card';
+          if (item.sold) card.classList.add('card-sold');
 
           const isPB = item.note.includes('PB') || item.note.includes('魂商');
           const isSideF = item.note.includes('SIDE-F') || item.note.includes('基地');
@@ -485,6 +509,7 @@
           card.innerHTML = `
             <div class="image-container" onclick="openModal('${item.filename}', '${escapeHtml(item.name)}')">
               <span class="card-id">#${item.id}</span>
+              ${item.sold ? '<span class="sold-badge">已售出</span>' : ''}
               <img src="${item.thumb}" alt="${escapeHtml(item.name)}" loading="lazy">
             </div>
             <div class="card-body">
