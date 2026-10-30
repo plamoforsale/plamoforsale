@@ -248,6 +248,13 @@
       font-weight: 500;
       text-transform: uppercase;
     }
+    .tag-sold {
+      background: rgba(185, 28, 28, 0.2);
+      color: #fecaca;
+      border: 1px solid rgba(248, 113, 113, 0.55);
+      font-weight: 700;
+    }
+
     .tag-series {
       background-color: #334155;
       color: #cbd5e1;
@@ -403,7 +410,7 @@
       <div class="stats-bar">
         <div class="stat-pill">總照片數：<strong id="totalCount">83</strong> 件</div>
         <div class="stat-pill">目前顯示：<strong id="visibleCount">83</strong> 件</div>
-        <div class="stat-pill">已售出：<strong id="soldCount">0</strong> 款</div>
+        <div class="stat-pill">已售出：<strong id="soldCount">5</strong> 款</div>
       </div>
     </header>
 
@@ -515,6 +522,7 @@
             <div class="card-body">
               <div class="card-header-tags">
                 <span class="tag tag-series">${escapeHtml(item.series)}</span>
+                ${item.sold ? '<span class="tag tag-sold">已售出</span>' : ''}
                 ${isPB ? '<span class="tag tag-pb">PB限定</span>' : ''}
                 ${isSideF ? '<span class="tag tag-sidef">SIDE-F限定</span>' : ''}
               </div>
